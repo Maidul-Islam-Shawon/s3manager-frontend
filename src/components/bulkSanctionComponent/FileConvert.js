@@ -18,6 +18,7 @@ const FileConvert = () => {
       setState({ file: files[0] });
     }
   };
+  //console.log(state);
 
   const handleFile = () => {
     //debugger;
@@ -39,7 +40,7 @@ const FileConvert = () => {
       });
 
       /* Get first worksheet */
-      const wsname = wb.SheetNames[0];
+      const wsname = wb.SheetNames[1];
       const ws = wb.Sheets[wsname];
 
       /* Convert array of arrays */
@@ -56,7 +57,7 @@ const FileConvert = () => {
     }
   };
 
-  //console.log(state.data);
+  console.log(state.data);
 
   return (
     <Container>

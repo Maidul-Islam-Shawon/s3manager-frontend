@@ -1,71 +1,58 @@
 import React, { useEffect, useState } from "react";
+import {
+  convertDate,
+  getIdentificationTypeID,
+  getsanctionTypeID,
+} from "../../utils/ExcelUploadValidation";
 
 const FilePost = ({ ExcelData }) => {
-  //console.log(ExcelData);
-  const [exlData, setExlData] = useState(ExcelData);
-  const [state, setState] = useState([
-    {
-      sanctionPartyType: 0,
-      name: "",
-      otherName: "",
-      dateOfBirth: "",
-      nationality: "",
-      address: "",
-      identificationType: 0,
-      identificationNumber: "",
-      sanctionTypeId: 0,
-      sanctionDetails: "",
-      sanctionDate: "",
-      sanctionExpiration: "",
-    },
-  ]);
+  const [state, setState] = useState([]);
+  // const [state, setState] = useState([
+  //   {
+  //     sanctionPartyType: 0,
+  //     name: "",
+  //     otherName: "",
+  //     dateOfBirth: "",
+  //     nationality: "",
+  //     address: "",
+  //     identificationType: 0,
+  //     identificationNumber: "",
+  //     sanctionTypeId: 0,
+  //     sanctionDetails: "",
+  //     sanctionDate: "",
+  //     sanctionExpiration: "",
+  //   },
+  // ]);
 
-  const [test, setTest] = useState();
+  let list = [];
 
   const [validData, SetValidData] = useState([]);
   const [invalidData, SetInvalidData] = useState([]);
 
-  //debugger;
-
-  // useEffect(() => {
-  //   if (ExcelData && ExcelData.length > 0) {
-  //     ExcelData.filter((x) => setState([...state, x]));
-  //   }
-  // }, [ExcelData]);
-
-  //debugger;
-
   const handlePost = (e) => {
     e.preventDefault();
 
-    //console.log("state:", state);
-    //ExcelData.map((x) => console.log("xasas", x.Surname));
-    //ExcelData.map((x) => setState([...state, { name: x.Surname }]));
-    //ExcelData.filter((x) => setState([...state, x]));
-    //setState([...state, ...ExcelData]);
-
-    //for(let)
-    //debugger;
-    // console.log(
-    //   "Res",
-    //   ExcelData.map((x) => setState([...state, { name: x.Surname }]))
-    // );
-
-    //let data = ExcelData.map((x) => x.Surname);
-    //console.log(data);
-
-    //setState(ExcelData.map((x) => x.Surname));
-
-    debugger;
-    //ExcelData.map((x) => setState([{ ...state, state.name: x.Surname }]));
-
-    // for (let i of ExcelData) {
-    //   //setState(...state, { name: i.Surname });
-    //   console.log("i:", i.Surname);
-    //   // setState((previousState) => ({
-    //   //   myArray: [...previousState.myArray, i.Surname],
-    //   // }));
-    // }
+    ExcelData.filter((x) =>
+      list.push({
+        sanctionPartyType: "",
+        name: x.Surname || x.Institution,
+        otherName: x["Other Name(s)"] || x.ADDRESS,
+        dateOfBirth: x["DATE OF BIRTH"]
+          ? convertDate(x["DATE OF BIRTH"])
+          : null,
+        nationality: x.NATIONALITY ? x.NATIONALITY : null,
+        address: x["BUSINESS REG NUMBER"] ? x["BUSINESS REG NUMBER"] : "",
+        identificationType: getIdentificationTypeID(x["ID TYPE"]),
+        identificationNumber: x["ID NUMBER"] || null,
+        sanctionTypeId:
+          getsanctionTypeID(x["Santion Type"]) ||
+          getsanctionTypeID(x["Sanction Type"]),
+        sanctionDetails: x["SANCTION DETAIL"] || x["SANCTION Details"],
+        sanctionDate: convertDate(x["SANCTION DATE"]),
+        sanctionExpiration: convertDate(x["SANCTION EXPIRATION"]),
+      })
+    );
+    setState(list);
   };
 
   console.log("states:", state);
