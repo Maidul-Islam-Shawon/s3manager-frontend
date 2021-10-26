@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
-import { SheetJSFT } from "./FileTypes";
+import { FileFormat } from "./FileFormat";
 import XLSX from "xlsx";
-import { make_cols } from "./ColumnBuilder";
+import { ColumnBuilder } from "./ColumnBuilder";
+import FilePost from "./FilePost";
 
 const FileConvert = () => {
   const [state, setState] = useState({
@@ -27,13 +28,13 @@ const FileConvert = () => {
 
     /* Boilerplate to set up FileReader */
     const reader = new FileReader();
-    const RaBS = !!reader.readAsBinaryString;
+    const readAsBinaryString = !!reader.readAsBinaryString;
 
     reader.onload = (e) => {
       /* Parse data */
-      const bstr = e.target.result;
-      const wb = XLSX.read(bstr, {
-        type: RaBS ? "binary" : "array",
+      const binaryString = e.target.result;
+      const wb = XLSX.read(binaryString, {
+        type: readAsBinaryString ? "binary" : "array",
         bookVBA: true,
       });
 
@@ -45,17 +46,17 @@ const FileConvert = () => {
       const data = XLSX.utils.sheet_to_json(ws, { defval: "" });
 
       /* Update state */
-      setState({ data: data, cols: make_cols(ws["!ref"]) });
+      setState({ data: data, cols: ColumnBuilder(ws["!ref"]) });
     };
 
-    if (RaBS) {
+    if (readAsBinaryString) {
       reader.readAsBinaryString(state.file);
     } else {
       reader.readAsArrayBuffer(state.file);
     }
   };
 
-  console.log(state.data);
+  //console.log(state.data);
 
   return (
     <Container>
@@ -68,11 +69,14 @@ const FileConvert = () => {
         type="file"
         className="form-control"
         id="file"
-        accept={SheetJSFT}
+        accept={FileFormat}
         onChange={handleChange}
       />
       <br />
-      <input type="submit" value="Process Triggers" onClick={handleFile} />
+      <input type="submit" value="Upload" onClick={handleFile} />
+      {/* <input type="submit" value="Submit" onClick={handlePost} /> */}
+      <hr />
+      <FilePost ExcelData={state.data} />
     </Container>
   );
 };
