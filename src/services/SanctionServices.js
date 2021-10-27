@@ -23,10 +23,12 @@ export const GetSanctionList = () => {
 
 export const PostSenctionBulkList = (convertedExcelData) => {
   try {
+    console.log(convertedExcelData);
     const response = Axios.post(
       SERVER_URL + "Sanction/create-sanction-bulk-list",
       convertedExcelData
     );
+    //console.log(response);
     return response;
   } catch (err) {
     throw err;

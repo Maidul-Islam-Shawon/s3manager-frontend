@@ -1,69 +1,34 @@
 import { Alert, Button } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
-import {
-  convertDate,
-  ExportToExcel,
-  getIdentificationTypeID,
-  getsanctionTypeID,
-} from "../../utils/ExcelUploadValidation";
+import { ExportToExcel } from "../../utils/ExcelUploadValidation";
 import { PostSenctionBulkList } from "../../services/SanctionServices";
+import { IndividualSanctionParty } from "./IndividualSanctionParty";
+import { CorporateSanctionParty } from "./CorporateSanctionParty";
 
-const FilePost = ({ ExcelData }) => {
+const FilePost = ({ ExcelData, SanctionPartyTypeValue }) => {
   const [state, setState] = useState([]);
   const [invalidState, SetInvalidState] = useState([]);
-
   const [errorMessage, setErrorMessage] = useState("");
+  const [errorlist, setErrorList] = useState([]);
   const [message, setMessage] = useState("");
 
-  let validDataset = [];
-  let invalidDataset = [];
-
   useEffect(() => {
-    ExcelData.filter((x) =>
-      getsanctionTypeID(x["Santion Type"]) > 0 &&
-      getsanctionTypeID(x["Santion Type"]) < 7 &&
-      getIdentificationTypeID(x["ID TYPE"]) > 0 &&
-      getIdentificationTypeID(x["ID TYPE"]) < 7 &&
-      x["ID NUMBER"] !== ""
-        ? validDataset.push({
-            SanctionPartyType: 1,
-            Name: x.Surname || x.Institution,
-            OtherName: x["Other Name(s)"] || x.ADDRESS,
-            DateOfBirth: x["DATE OF BIRTH"]
-              ? convertDate(x["DATE OF BIRTH"])
-              : null,
-            Nationality: x.NATIONALITY ? x.NATIONALITY : null,
-            Address: x["BUSINESS REG NUMBER"] ? x["BUSINESS REG NUMBER"] : "",
-            IdentificationType: getIdentificationTypeID(x["ID TYPE"]),
-            IdentificationNumber: x["ID NUMBER"] || null,
-            SanctionTypeId:
-              getsanctionTypeID(x["Santion Type"]) ||
-              getsanctionTypeID(x["Sanction Type"]),
-            SanctionDetails: x["SANCTION DETAIL"] || x["SANCTION Details"],
-            SanctionDate: convertDate(x["SANCTION DATE"]),
-            SanctionExpiration: convertDate(x["SANCTION EXPIRATION"]),
-          })
-        : invalidDataset.push({
-            Surname: x.Surname || x.Institution,
-            "Other Name(s)": x["Other Name(s)"] || x.ADDRESS,
-            "DATE OF BIRTH": x["DATE OF BIRTH"]
-              ? convertDate(x["DATE OF BIRTH"])
-              : null,
-            NATIONALITY: x.NATIONALITY ? x.NATIONALITY : null,
-            "BUSINESS REG NUMBER": x["BUSINESS REG NUMBER"]
-              ? x["BUSINESS REG NUMBER"]
-              : "",
-            "ID TYPE": x["ID TYPE"],
-            "ID NUMBER": x["ID NUMBER"],
-            "Santion Type": x["Santion Type"] || x["Sanction Type"],
-            "SANCTION DETAIL": x["SANCTION DETAIL"] || x["SANCTION Details"],
-            "SANCTION DATE": convertDate(x["SANCTION DATE"]),
-            "SANCTION EXPIRATION": convertDate(x["SANCTION EXPIRATION"]),
-          })
-    );
-    setState(validDataset);
-    SetInvalidState(invalidDataset);
-    setMessage();
+    let result;
+    if (SanctionPartyTypeValue === 1) {
+      result = IndividualSanctionParty(ExcelData);
+      setState(result.validDataset);
+      SetInvalidState(result.invalidDataset);
+      setMessage();
+    } else if (SanctionPartyTypeValue === 2) {
+      result = CorporateSanctionParty(ExcelData);
+      setState(result.validDataset);
+      SetInvalidState(result.invalidDataset);
+      setMessage();
+    } else {
+      setErrorMessage(
+        "Something went wrong! Please contact with Administrator"
+      );
+    }
   }, []);
 
   console.log("valid states:", state);
@@ -77,15 +42,7 @@ const FilePost = ({ ExcelData }) => {
         console.log(res);
         setMessage("File Uploaded Succefully");
       })
-      .catch((err) =>
-        err.message !== ""
-          ? setState({
-              sanctionTypeData: [],
-              loading: false,
-              hasError: true,
-            })
-          : setErrorMessage(err.message)
-      );
+      .catch((err) => setErrorList(err.response.data));
   };
 
   return (
@@ -120,6 +77,17 @@ const FilePost = ({ ExcelData }) => {
           <br />
           <br />
           <Alert variant="danger">{errorMessage}</Alert>
+        </>
+      ) : (
+        <div></div>
+      )}
+      {errorlist ? (
+        <>
+          <br />
+          <br />
+          {errorlist.map((err) => (
+            <Alert variant="danger">{err.Message}</Alert>
+          ))}
         </>
       ) : (
         <div></div>

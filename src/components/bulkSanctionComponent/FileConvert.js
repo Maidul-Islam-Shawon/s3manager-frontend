@@ -14,6 +14,7 @@ const FileConvert = () => {
 
   const [success, isSuccess] = useState(false);
   const [fileUploaded, isFileUploaded] = useState(false);
+  const [sanctionPartyTypeValue, setSanctionPartyTypeValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
@@ -28,13 +29,17 @@ const FileConvert = () => {
   //console.log(state);
 
   const handleFile = () => {
-    debugger;
+    if (sanctionPartyTypeValue === 0) {
+      setErrorMessage("Please select a file type");
+      return;
+    }
+    //debugger;
     if (!fileUploaded) {
       console.log("no file attached");
       setErrorMessage("No File Attached or Expired!");
       return;
     }
-
+    setErrorMessage();
     /* Boilerplate to set up FileReader */
     const reader = new FileReader();
     const readAsBinaryString = !!reader.readAsBinaryString;
@@ -83,17 +88,31 @@ const FileConvert = () => {
               Bulk Upload
             </h2>
             <hr />
-            <Form.Group controlId="formFileLg" className="mb-3">
-              <Form.Label>
-                <h6>Upload an Excel File</h6>
-              </Form.Label>
-              <Form.Control
-                type="file"
-                size="lg"
-                accept={FileFormat}
-                onChange={handleChange}
-              />
-            </Form.Group>
+            <h6>Upload an Excel File</h6>
+            <Row>
+              <Col md={10}>
+                <Form.Group controlId="formFileLg" className="mb-3">
+                  <Form.Control
+                    type="file"
+                    accept={FileFormat}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={2}>
+                <Form.Select
+                  aria-label="Default select example"
+                  size="lg"
+                  onChange={(e) =>
+                    setSanctionPartyTypeValue(parseInt(e.target.value))
+                  }
+                >
+                  <option>Select File Type...</option>
+                  <option value="1">Individual</option>
+                  <option value="2">Corporate</option>
+                </Form.Select>
+              </Col>
+            </Row>
 
             <Button
               variant="primary"
@@ -109,7 +128,11 @@ const FileConvert = () => {
             <hr />
             {success ? (
               <>
-                <FilePost ExcelData={state.data} /> <hr />
+                <FilePost
+                  ExcelData={state.data}
+                  SanctionPartyTypeValue={sanctionPartyTypeValue}
+                />
+                <hr />
               </>
             ) : (
               <div></div>
