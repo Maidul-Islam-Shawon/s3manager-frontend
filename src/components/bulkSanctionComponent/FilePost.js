@@ -13,6 +13,7 @@ const FilePost = ({ ExcelData }) => {
   const [invalidState, SetInvalidState] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
 
   let validDataset = [];
   let invalidDataset = [];
@@ -62,6 +63,7 @@ const FilePost = ({ ExcelData }) => {
     );
     setState(validDataset);
     SetInvalidState(invalidDataset);
+    setMessage();
   }, []);
 
   console.log("valid states:", state);
@@ -73,6 +75,7 @@ const FilePost = ({ ExcelData }) => {
     PostSenctionBulkList(state)
       .then((res) => {
         console.log(res);
+        setMessage("File Uploaded Succefully");
       })
       .catch((err) =>
         err.message !== ""
@@ -103,8 +106,21 @@ const FilePost = ({ ExcelData }) => {
       ) : (
         ""
       )}
+      {message ? (
+        <>
+          <br />
+          <br />
+          <Alert variant="success">{message}</Alert>
+        </>
+      ) : (
+        <div></div>
+      )}
       {errorMessage ? (
-        <Alert variant="danger">{errorMessage}</Alert>
+        <>
+          <br />
+          <br />
+          <Alert variant="danger">{errorMessage}</Alert>
+        </>
       ) : (
         <div></div>
       )}
