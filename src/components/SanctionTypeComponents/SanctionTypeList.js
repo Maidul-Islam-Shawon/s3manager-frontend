@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SanctionTypeCard from "./SanctionTypeCard";
 import { Container, Spinner } from "react-bootstrap";
-import Services from "../../services/Services";
+import { GetSanctionList } from "../../services/SanctionServices";
 
 const SanctionTypeList = () => {
   const [state, setState] = useState({
@@ -13,11 +13,11 @@ const SanctionTypeList = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    debugger;
-    Services.getSanctionList()
+    //debugger;
+    GetSanctionList()
       .then((res) => {
         setState({
-          sanctionTypeData: res,
+          sanctionTypeData: res.data,
           loading: false,
           hasError: false,
         });

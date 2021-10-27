@@ -33,6 +33,16 @@ const TopNav = () => {
                 Sanction List
               </Nav.Link>
             </Nav.Item>
+            <Nav.Item className="navPadding">
+              <Nav.Link
+                href
+                as={Link}
+                to="/bulk-sanction"
+                style={{ color: "white" }}
+              >
+                Bulk Sanction Upload
+              </Nav.Link>
+            </Nav.Item>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
