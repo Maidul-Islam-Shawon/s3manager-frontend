@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container } from "react-bootstrap";
+import { Container, Form, Button, Alert, Row, Col } from "react-bootstrap";
 import { FileFormat } from "./FileFormat";
 import XLSX from "xlsx";
 import { ColumnBuilder } from "./ColumnBuilder";
@@ -12,18 +12,26 @@ const FileConvert = () => {
     cols: [],
   });
 
+  const [success, isSuccess] = useState(false);
+  const [fileUploaded, isFileUploaded] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleChange = (e) => {
     const files = e.target.files;
     if (files && files[0]) {
       setState({ file: files[0] });
+      isFileUploaded(true);
+      setErrorMessage();
+      isSuccess(false);
     }
   };
   //console.log(state);
 
   const handleFile = () => {
-    //debugger;
-    if (!state.file) {
+    debugger;
+    if (!fileUploaded) {
       console.log("no file attached");
+      setErrorMessage("No File Attached or Expired!");
       return;
     }
 
@@ -40,7 +48,12 @@ const FileConvert = () => {
       });
 
       /* Get first worksheet */
-      const wsname = wb.SheetNames[1];
+      if (wb.SheetNames[1]) {
+        console.log("Please upload Excel file with single sheet");
+        setErrorMessage("Please upload Excel file with single sheet!");
+        return;
+      }
+      const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
 
       /* Convert array of arrays */
@@ -48,6 +61,8 @@ const FileConvert = () => {
 
       /* Update state */
       setState({ data: data, cols: ColumnBuilder(ws["!ref"]) });
+      isSuccess(true);
+      isFileUploaded(false);
     };
 
     if (readAsBinaryString) {
@@ -61,23 +76,53 @@ const FileConvert = () => {
 
   return (
     <Container>
-      <h2 style={{ marginTop: "80px" }}>File Convert</h2>
-      <hr />
+      <Row>
+        <Col>
+          <div className="fileConvert-body">
+            <h2 style={{ marginTop: "80px", textAlign: "center" }}>
+              Bulk Upload
+            </h2>
+            <hr />
+            <Form.Group controlId="formFileLg" className="mb-3">
+              <Form.Label>
+                <h6>Upload an Excel File</h6>
+              </Form.Label>
+              <Form.Control
+                type="file"
+                size="lg"
+                accept={FileFormat}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-      <label htmlFor="file">Upload an excel to Process Triggers</label>
-      <br />
-      <input
-        type="file"
-        className="form-control"
-        id="file"
-        accept={FileFormat}
-        onChange={handleChange}
-      />
-      <br />
-      <input type="submit" value="Upload" onClick={handleFile} />
-      {/* <input type="submit" value="Submit" onClick={handlePost} /> */}
-      <hr />
-      <FilePost ExcelData={state.data} />
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={handleFile}
+              value="Upload"
+            >
+              Upload
+            </Button>
+
+            <br />
+
+            <hr />
+            {success ? (
+              <>
+                <FilePost ExcelData={state.data} /> <hr />
+              </>
+            ) : (
+              <div></div>
+            )}
+
+            {errorMessage ? (
+              <Alert variant="danger">{errorMessage}</Alert>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
 };

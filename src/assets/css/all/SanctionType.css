@@ -1,0 +1,9 @@
+.fileConvert-body {
+  background-color: rgb(255, 252, 226);
+  padding: 0px 15px 15px 15px;
+  border-radius: 15px;
+  border-color: black;
+  -moz-box-shadow: 3px 3px 1px 3px rgb(0, 50, 73);
+  -webkit-box-shadow: 3px 3px 1px 3px rgb(0, 50, 73);
+  box-shadow: 3px 3px 5px 1px rgb(0, 50, 73);
+}

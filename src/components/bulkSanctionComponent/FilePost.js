@@ -1,66 +1,111 @@
+import { Alert, Button } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import {
   convertDate,
+  ExportToExcel,
   getIdentificationTypeID,
   getsanctionTypeID,
 } from "../../utils/ExcelUploadValidation";
+import { PostSenctionBulkList } from "../../services/SanctionServices";
 
 const FilePost = ({ ExcelData }) => {
   const [state, setState] = useState([]);
-  // const [state, setState] = useState([
-  //   {
-  //     sanctionPartyType: 0,
-  //     name: "",
-  //     otherName: "",
-  //     dateOfBirth: "",
-  //     nationality: "",
-  //     address: "",
-  //     identificationType: 0,
-  //     identificationNumber: "",
-  //     sanctionTypeId: 0,
-  //     sanctionDetails: "",
-  //     sanctionDate: "",
-  //     sanctionExpiration: "",
-  //   },
-  // ]);
+  const [invalidState, SetInvalidState] = useState([]);
 
-  let list = [];
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const [validData, SetValidData] = useState([]);
-  const [invalidData, SetInvalidData] = useState([]);
+  let validDataset = [];
+  let invalidDataset = [];
+
+  useEffect(() => {
+    ExcelData.filter((x) =>
+      getsanctionTypeID(x["Santion Type"]) > 0 &&
+      getsanctionTypeID(x["Santion Type"]) < 7 &&
+      getIdentificationTypeID(x["ID TYPE"]) > 0 &&
+      getIdentificationTypeID(x["ID TYPE"]) < 7
+        ? validDataset.push({
+            SanctionPartyType: 1,
+            Name: x.Surname || x.Institution,
+            OtherName: x["Other Name(s)"] || x.ADDRESS,
+            DateOfBirth: x["DATE OF BIRTH"]
+              ? convertDate(x["DATE OF BIRTH"])
+              : null,
+            Nationality: x.NATIONALITY ? x.NATIONALITY : null,
+            Address: x["BUSINESS REG NUMBER"] ? x["BUSINESS REG NUMBER"] : "",
+            IdentificationType: getIdentificationTypeID(x["ID TYPE"]),
+            IdentificationNumber: x["ID NUMBER"] || null,
+            SanctionTypeId:
+              getsanctionTypeID(x["Santion Type"]) ||
+              getsanctionTypeID(x["Sanction Type"]),
+            SanctionDetails: x["SANCTION DETAIL"] || x["SANCTION Details"],
+            SanctionDate: convertDate(x["SANCTION DATE"]),
+            SanctionExpiration: convertDate(x["SANCTION EXPIRATION"]),
+          })
+        : invalidDataset.push({
+            SanctionPartyType: 1,
+            Name: x.Surname || x.Institution,
+            OtherName: x["Other Name(s)"] || x.ADDRESS,
+            DateOfBirth: x["DATE OF BIRTH"]
+              ? convertDate(x["DATE OF BIRTH"])
+              : null,
+            Nationality: x.NATIONALITY ? x.NATIONALITY : null,
+            Address: x["BUSINESS REG NUMBER"] ? x["BUSINESS REG NUMBER"] : "",
+            IdentificationType: x["ID TYPE"],
+            IdentificationNumber: x["ID NUMBER"] || null,
+            SanctionTypeId: x["Santion Type"] || x["Sanction Type"],
+            SanctionDetails: x["SANCTION DETAIL"] || x["SANCTION Details"],
+            SanctionDate: convertDate(x["SANCTION DATE"]),
+            SanctionExpiration: convertDate(x["SANCTION EXPIRATION"]),
+          })
+    );
+    setState(validDataset);
+    SetInvalidState(invalidDataset);
+  }, []);
+
+  console.log("valid states:", state);
+  console.log("invalid states:", invalidState);
 
   const handlePost = (e) => {
     e.preventDefault();
 
-    ExcelData.filter((x) =>
-      list.push({
-        sanctionPartyType: "",
-        name: x.Surname || x.Institution,
-        otherName: x["Other Name(s)"] || x.ADDRESS,
-        dateOfBirth: x["DATE OF BIRTH"]
-          ? convertDate(x["DATE OF BIRTH"])
-          : null,
-        nationality: x.NATIONALITY ? x.NATIONALITY : null,
-        address: x["BUSINESS REG NUMBER"] ? x["BUSINESS REG NUMBER"] : "",
-        identificationType: getIdentificationTypeID(x["ID TYPE"]),
-        identificationNumber: x["ID NUMBER"] || null,
-        sanctionTypeId:
-          getsanctionTypeID(x["Santion Type"]) ||
-          getsanctionTypeID(x["Sanction Type"]),
-        sanctionDetails: x["SANCTION DETAIL"] || x["SANCTION Details"],
-        sanctionDate: convertDate(x["SANCTION DATE"]),
-        sanctionExpiration: convertDate(x["SANCTION EXPIRATION"]),
+    PostSenctionBulkList(state)
+      .then((res) => {
+        console.log(res);
       })
-    );
-    setState(list);
+      .catch((err) =>
+        err.message !== ""
+          ? setState({
+              sanctionTypeData: [],
+              loading: false,
+              hasError: true,
+            })
+          : setErrorMessage(err.message)
+      );
   };
-
-  console.log("states:", state);
 
   return (
     <div>
       <h2>File Post</h2>
-      <input type="submit" value="Submit" onClick={handlePost} />
+      <Button variant="success" type="submit" onClick={handlePost}>
+        Submit
+      </Button>
+      &nbsp;&nbsp;
+      {invalidState ? (
+        <Button
+          type="button"
+          variant="outline-info"
+          onClick={ExportToExcel(invalidState)}
+        >
+          Download Invalid Data
+        </Button>
+      ) : (
+        ""
+      )}
+      {errorMessage ? (
+        <Alert variant="danger">{errorMessage}</Alert>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import exportFromJSON from "export-from-json";
+
 /* ...Convert from Excel Date format... */
 export const convertDate = (excelDate) => {
   var date = new Date(Math.round((excelDate - (25567 + 1)) * 86400 * 1000));
@@ -24,6 +26,9 @@ export const getsanctionTypeID = (IdentificationType) => {
 };
 
 export const getIdentificationTypeID = (IdentificationType) => {
+  if (IdentificationType < 1 && IdentificationType > 5) {
+    return 0;
+  }
   switch (IdentificationType) {
     case "National ID":
       return 1;
@@ -37,5 +42,31 @@ export const getIdentificationTypeID = (IdentificationType) => {
       return 5;
     default:
       return 0;
+  }
+};
+
+export const ExportToExcel = (invalidState) => {
+  try {
+    const data = invalidState;
+    var today = new Date();
+    var date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    var time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date + " " + time;
+
+    const fileName = "Invalid-Data-" + dateTime;
+    const exportType = "xls";
+
+    const result = () => {
+      exportFromJSON({ data, fileName, exportType });
+    };
+    return result;
+  } catch (err) {
+    throw err;
   }
 };
