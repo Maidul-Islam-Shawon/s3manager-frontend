@@ -44,7 +44,12 @@ function App() {
 
       <Route exact path="/SanctionList" component={SanctionList} />
 
-        <Route exact path="/bulk-sanction" component={BulkSanctionPage} />
+        <Route exact path="/bulk-sanction" component={BulkSanctionPage} render={(props) => (
+                <AddSanction {...props} name= "Bulk Sanction Upload"  />
+              )}/>
+
+
+
       </Switch>
       <Footer />
     </Router>

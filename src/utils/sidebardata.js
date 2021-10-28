@@ -29,6 +29,12 @@ export let sidebardata = [
         icon : "icon ion-android-clipboard",
         ParentId: 1
     },
+    {
+        id: 6, name: "Bulk Sanction Upload",
+        url: "/bulk-sanction",
+        icon : "icon ion-android-clipboard",
+        ParentId: 1
+    },
 
    
 ];

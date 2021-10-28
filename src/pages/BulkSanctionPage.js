@@ -4,7 +4,12 @@ import FileConvert from "../components/bulkSanctionComponent/FileConvert";
 const BulkSanctionPage = () => {
   return (
     <>
-      <FileConvert />
+    <div className="kt-mainpanel">
+        <div className="kt-pagebody">
+        <FileConvert />
+          </div>
+        </div>
+     
     </>
   );
 };
