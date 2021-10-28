@@ -2,7 +2,11 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Footer from "./common/Footer";
 import TopNav from "./common/TopNav";
+
 import Sidebar from "./common/Sidebar";
+
+import BulkSanctionPage from "./pages/BulkSanctionPage";
+
 import HomePage from "./pages/HomePage";
 import SanctionPage from "./pages/SanctionPage"
 import SanctionTypePage from "./pages/SanctionTypePage";
@@ -23,6 +27,7 @@ function App() {
         </Route> */}
         <Route exact path="/sanction-type-list" component={SanctionTypePage} />
 
+
         <Route
         exact
             path="/AddIndividualSanction"
@@ -38,6 +43,8 @@ function App() {
         />
 
       <Route exact path="/SanctionList" component={SanctionList} />
+
+        <Route exact path="/bulk-sanction" component={BulkSanctionPage} />
       </Switch>
       <Footer />
     </Router>
