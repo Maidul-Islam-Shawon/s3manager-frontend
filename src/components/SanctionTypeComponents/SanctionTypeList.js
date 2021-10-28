@@ -52,10 +52,13 @@ const SanctionTypeList = () => {
   }
 
   return (
-    <Container>
+    <div className = "kt-mainpanel">
+        <Container>
       <SanctionTypeCard />
       {renderSanctionTypeData()}
     </Container>
+    </div>
+    
   );
 };
 

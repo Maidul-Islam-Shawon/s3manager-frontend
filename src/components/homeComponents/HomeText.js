@@ -3,7 +3,8 @@ import { Container, Row, Col } from "react-bootstrap";
 
 const HomeText = () => {
   return (
-    <Container>
+    <div className = "kt-mainpanel">
+    <Container >
       <h2>Home Page</h2>
 
       <Row className="bodyText">
@@ -92,6 +93,7 @@ const HomeText = () => {
         </Col>
       </Row>
     </Container>
+    </div>
   );
 };
 
