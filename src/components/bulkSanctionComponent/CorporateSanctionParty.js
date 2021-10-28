@@ -19,7 +19,7 @@ export const CorporateSanctionParty = (ExcelData) => {
           DateOfBirth: null,
           Nationality: null,
           Address: x["ADDRESS"] ? x["ADDRESS"] : "",
-          IdentificationType: 1,
+          IdentificationType: 6,
           IdentificationNumber: x["BUSINESS REG NUMBER"]
             ? x["BUSINESS REG NUMBER"]
             : "",
