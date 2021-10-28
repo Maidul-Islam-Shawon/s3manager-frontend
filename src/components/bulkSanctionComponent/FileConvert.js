@@ -103,7 +103,7 @@ const FileConvert = () => {
                 <Form.Select
                   aria-label="Default select example"
                   size="lg"
-                  class="form-control"
+                  className="form-control"
                   onChange={(e) =>
                     setSanctionPartyTypeValue(parseInt(e.target.value))
                   }

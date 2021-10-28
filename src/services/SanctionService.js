@@ -1,4 +1,4 @@
- //Retrievesanctions
+//Retrievesanctions
 //   const retrievesanctions = async () => {
 //     const response = await api.get("/sanctions");
 //     return response.data;
@@ -6,28 +6,28 @@
 import Axios from "axios";
 import { SERVER_URL } from "../utils/ServerUrl";
 //import api from "../api/common-http";
-class SanctionService{
-    
-   async   addSanctionHandler (sanction) {
-        const request = {
-          ...sanction,
-        };
-        try {
-            var response = await Axios.post(SERVER_URL + "create-sanction-list",request);
-            
-            if(response.data=== 1) {
-                console.log("adding sanction data");
-                //alert("Upload Successfull!");
-                return response.data;
-            }
-            
-        } catch (error) {
-            
-            console.log(error);
-            return 0;
-        }
-       // setSanctions([...sanctions, response.data]);
+class SanctionService {
+  async addSanctionHandler(sanction) {
+    const request = {
+      ...sanction,
     };
+    try {
+      var response = await Axios.post(
+        SERVER_URL + "Sanction/create-sanction-list",
+        request
+      );
+
+      if (response.data === 1) {
+        console.log("adding sanction data");
+        //alert("Upload Successfull!");
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return 0;
+    }
+    // setSanctions([...sanctions, response.data]);
+  }
 }
 export default new SanctionService();
 
@@ -64,4 +64,3 @@ export default new SanctionService();
 //     const allsanctions = await retrievesanctions();
 //     if (allsanctions) setSanctions(allsanctions);
 //   };
-  
